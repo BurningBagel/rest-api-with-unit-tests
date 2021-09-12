@@ -2,8 +2,10 @@ package com.example.beerapi.controller;
 
 
 import com.example.beerapi.dto.BeerDTO;
+import com.example.beerapi.dto.QuantityDTO;
 import com.example.beerapi.exception.BeerAlreadyRegisteredException;
 import com.example.beerapi.exception.BeerNotFoundException;
+import com.example.beerapi.exception.BeerStockExceededException;
 import com.example.beerapi.service.BeerService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ public class BeerController implements BeerControllerDocs{
         return beerService.createBeer(beerDTO);
     }
 
+    @GetMapping("/{name}")
     public BeerDTO findByName(@PathVariable String name) throws BeerNotFoundException{
         return beerService.findByName(name);
     }
@@ -35,9 +38,13 @@ public class BeerController implements BeerControllerDocs{
         return beerService.listAll();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable Long id) throws BeerNotFoundException {
         beerService.deleteById(id);
+    }
+
+    public BeerDTO increment(@PathVariable Long id, @RequestBody @Valid QuantityDTO quantityDTO) throws BeerNotFoundException, BeerStockExceededException {
+        return beerService.increment(id,quantityDTO.getQuantity());
     }
 }
